@@ -9,6 +9,7 @@ A SATySFi package to make typesetting equations for physics simpler, faster, and
 * Quick quad text
 * Derivatives
 * Dirac bra-ket notation
+* left/right only parenthesis/brackets
 
 ## Installation
 

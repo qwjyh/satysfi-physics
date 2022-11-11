@@ -1,0 +1,179 @@
+% additional parens
+% depend on azmath/parens
+@import: azmath/src/parens
+
+module LRParens : sig
+
+  % left/right parens
+  direct \lp      : [length?; math;] math-cmd
+  direct \rp      : [length?; math;] math-cmd
+  direct \lpb     : [length?; math;] math-cmd
+  direct \rpb     : [length?; math;] math-cmd
+  direct \lpB     : [length?; math;] math-cmd
+  direct \rpB     : [length?; math;] math-cmd
+  direct \lpabs   : [length?; math;] math-cmd
+  direct \rpabs   : [length?; math;] math-cmd
+  direct \lpnorm  : [length?; math;] math-cmd
+  direct \rpnorm  : [length?; math;] math-cmd
+  direct \lpangle : [length?; math;] math-cmd
+  direct \rpangle : [length?; math;] math-cmd
+
+  direct \evaluated : [length?; math;] math-cmd
+
+end = struct
+
+  open AZMathParens
+
+  % paren
+  let-math \lp ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      (paren-scheme (gr-round-bracket true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rp ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-round-bracket false) half-height)
+          m
+
+  % curly brace
+  let-math \lpb ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      (paren-scheme (gr-curly-bracket true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rpb ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-curly-bracket false) half-height)
+          m
+
+  % square bracket
+  let-math \lpB ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      (paren-scheme (gr-square-bracket 0.5pt true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rpB ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-square-bracket 0.5pt false) half-height)
+          m
+
+  % abs
+  let-math \lpabs ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default-with-paddings 0.08
+    in
+    math-paren
+      (paren-scheme (gr-abs-bracket 0.5pt true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rpabs ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default-with-paddings 0.08
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-abs-bracket 0.5pt false) half-height)
+          m
+
+  % norm
+  let-math \lpnorm ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default-with-paddings 0.08
+    in
+    math-paren
+      (paren-scheme (gr-norm-bracket 0.5pt true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rpnorm ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default-with-paddings 0.08
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-norm-bracket 0.5pt false) half-height)
+          m
+
+  % angle bracket
+  let-math \lpangle ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+        empty-bracket-r
+          m
+
+  let-math \rpangle ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+          m
+
+
+
+
+  let-math \evaluated ?:ht m =
+    let half-height =
+      match ht with
+      | Some(ht) -> parensize-fixed ht 0pt
+      | None     -> parensize-default-with-paddings 0.08
+    in
+    math-paren
+      empty-bracket-l
+        (paren-scheme (gr-abs-bracket 0.5pt false) half-height)
+          m
+
+end
