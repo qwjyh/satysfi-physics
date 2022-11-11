@@ -3,8 +3,8 @@
 % the HEAD of master branch
 
 % require the latest commit of azmath to use parensize functions
-@require: azmath/parens
-% @import: azmath/src/parens
+% @require: azmath/parens
+@import: azmath/src/parens
 @require: base/option-ext
 
 
@@ -48,30 +48,26 @@ end = struct
         (paren-scheme (gr-abs-bracket 0.5pt false) half-height)
           m
   
-  let-math \innerproduct ?:ht lm rm =
+  let innerproduct ?:ht lm rm =
     let half-height = calc-half-height ht in
     math-paren-with-middle
       (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
         (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
           (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
             [lm; rm;]
-
-  let-math \braket ?:ht lm rm =
-    match ht with
-    | None     -> ${\innerproduct{#lm}{#rm}}
-    | Some(ht) -> ${\innerproduct?:!(ht){#lm}{#rm}}
   
-  let-math \outerproduct ?:ht lm rm =
+  let-math \innerproduct = innerproduct
+  let-math \braket = innerproduct
+  
+  let outerproduct ?:ht lm rm =
     match ht with
     | None     -> ${\ket{#lm}\bra{#rm}}
     | Some(ht) -> ${\ket?:!(ht){#lm}\bra?:!(ht){#rm}}
 
-  let-math \ketbra ?:ht lm rm =
-    match ht with
-    | None     -> ${\outerproduct{#lm}{#rm}}
-    | Some(ht) -> ${\outerproduct?:!(ht){#lm}{#rm}}
+  let-math \outerproduct = outerproduct
+  let-math \ketbra = outerproduct
 
-  let-math \expectationvalue ?:ht ?:m2-ref m =
+  let expectationvalue ?:ht ?:m2-ref m =
     if Option.is-none ht then
       if Option.is-none m2-ref then
         ${\pangle{#m}}
@@ -95,14 +91,10 @@ end = struct
               (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
                 [m2; m; m2;]
   
-  let-math \expval ?:ht ?:m2 m =
-    match (ht, m2) with
-    | (None,     None    ) -> ${\expectationvalue{#m}}
-    | (Some(ht), None    ) -> ${\expectationvalue?:!(ht){#m}}
-    | (None    , Some(m2)) -> ${\expectationvalue?*?:!(m2){#m}}
-    | (Some(ht), Some(m2)) -> ${\expectationvalue?:!(ht)?:!(m2){#m}}
+  let-math \expectationvalue = expectationvalue
+  let-math \expval = expectationvalue
 
-  let-math \matrixelement ?:ht lm mm rm =
+  let matrixelement ?:ht lm mm rm =
     let half-height = calc-half-height ht in
     math-paren-with-middle
       (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
@@ -110,14 +102,8 @@ end = struct
           (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
             [lm; mm; rm;]
 
-  let-math \matrixel ?:ht lm mm rm =
-    match ht with
-    | None      -> ${\matrixelement{#lm}{#mm}{#rm}}
-    | Some(ht)  -> ${\matrixelement?:!(ht){#lm}{#mm}{#rm}}
-
-  let-math \mel ?:ht lm mm rm =
-    match ht with
-    | None      -> ${\matrixelement{#lm}{#mm}{#rm}}
-    | Some(ht)  -> ${\matrixelement?:!(ht){#lm}{#mm}{#rm}}
+  let-math \matrixelement = matrixelement
+  let-math \matrixel = matrixelement
+  let-math \mel = matrixelement
 
 end
