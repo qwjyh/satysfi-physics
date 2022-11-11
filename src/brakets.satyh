@@ -1,0 +1,123 @@
+% Dirac's brakets
+% depend on azmath/parens
+% the HEAD of master branch
+
+% require the latest commit of azmath to use parensize functions
+@require: azmath/parens
+% @import: azmath/src/parens
+@require: base/option-ext
+
+
+% module name is named after LaTeX Physics package
+module Brakets : sig
+
+  % brakets
+  direct \bra              : [length?; math;] math-cmd
+  direct \ket              : [length?; math;] math-cmd
+  val    \innerproduct     : [length?; math; math;] math-cmd
+  direct \braket           : [length?; math; math;] math-cmd
+  val    \outerproduct     : [length?; math; math;] math-cmd
+  direct \ketbra           : [length?; math; math;] math-cmd
+  val    \expectationvalue : [length?; math?; math;] math-cmd
+  direct \expval           : [length?; math?; math;] math-cmd
+  val    \matrixelement    : [length?; math; math; math;] math-cmd
+  direct \matrixel         : [length?; math; math; math;] math-cmd
+  val    \mel              : [length?; math; math; math;] math-cmd
+
+end = struct
+
+  open AZMathParens
+
+
+  let calc-half-height ht =
+    match ht with
+    | Some(ht) -> parensize-fixed ht 0pt
+    | None     -> parensize-default
+
+  let-math \ket ?:ht m =
+    let half-height = calc-half-height ht in
+    math-paren
+      (paren-scheme (gr-abs-bracket 0.5pt true) half-height)
+        (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+          m
+
+  let-math \bra ?:ht m =
+    let half-height = calc-half-height ht in
+    math-paren
+      (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+        (paren-scheme (gr-abs-bracket 0.5pt false) half-height)
+          m
+  
+  let-math \innerproduct ?:ht lm rm =
+    let half-height = calc-half-height ht in
+    math-paren-with-middle
+      (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+        (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+          (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
+            [lm; rm;]
+
+  let-math \braket ?:ht lm rm =
+    match ht with
+    | None     -> ${\innerproduct{#lm}{#rm}}
+    | Some(ht) -> ${\innerproduct?:!(ht){#lm}{#rm}}
+  
+  let-math \outerproduct ?:ht lm rm =
+    match ht with
+    | None     -> ${\ket{#lm}\bra{#rm}}
+    | Some(ht) -> ${\ket?:!(ht){#lm}\bra?:!(ht){#rm}}
+
+  let-math \ketbra ?:ht lm rm =
+    match ht with
+    | None     -> ${\outerproduct{#lm}{#rm}}
+    | Some(ht) -> ${\outerproduct?:!(ht){#lm}{#rm}}
+
+  let-math \expectationvalue ?:ht ?:m2-ref m =
+    if Option.is-none ht then
+      if Option.is-none m2-ref then
+        ${\pangle{#m}}
+      else
+        let half-height = calc-half-height ht in
+        let m2 = Option.unwrap m2-ref in
+        math-paren-with-middle
+          (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+            (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+              (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
+                [m2; m; m2;]
+    else
+      if Option.is-none m2-ref then
+        ${\pangle?:!(Option.unwrap ht){#m}}
+      else
+        let half-height = calc-half-height ht in
+        let m2 = Option.unwrap m2-ref in
+        math-paren-with-middle
+          (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+            (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+              (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
+                [m2; m; m2;]
+  
+  let-math \expval ?:ht ?:m2 m =
+    match (ht, m2) with
+    | (None,     None    ) -> ${\expectationvalue{#m}}
+    | (Some(ht), None    ) -> ${\expectationvalue?:!(ht){#m}}
+    | (None    , Some(m2)) -> ${\expectationvalue?*?:!(m2){#m}}
+    | (Some(ht), Some(m2)) -> ${\expectationvalue?:!(ht)?:!(m2){#m}}
+
+  let-math \matrixelement ?:ht lm mm rm =
+    let half-height = calc-half-height ht in
+    math-paren-with-middle
+      (paren-scheme (gr-angle-bracket 0.5pt true) half-height)
+        (paren-scheme (gr-angle-bracket 0.5pt false) half-height)
+          (paren-scheme (gr-abs-bracket-m 0.5pt) half-height)
+            [lm; mm; rm;]
+
+  let-math \matrixel ?:ht lm mm rm =
+    match ht with
+    | None      -> ${\matrixelement{#lm}{#mm}{#rm}}
+    | Some(ht)  -> ${\matrixelement?:!(ht){#lm}{#mm}{#rm}}
+
+  let-math \mel ?:ht lm mm rm =
+    match ht with
+    | None      -> ${\matrixelement{#lm}{#mm}{#rm}}
+    | Some(ht)  -> ${\matrixelement?:!(ht){#lm}{#mm}{#rm}}
+
+end
